@@ -1,6 +1,7 @@
 import React from "react"
 import Router from "next/router"
 import Layout from "../app/Layout"
+import fetch from "node-fetch"
 
 import {
   Segment,
@@ -21,6 +22,7 @@ export default class Home extends React.Component {
 
     this.handleSearchPhraseChange = this.handleSearchPhraseChange.bind(this)
     this.redirectToSearchPage = this.redirectToSearchPage.bind(this)
+    this.redirectToRandomPage = this.redirectToRandomPage.bind(this)
   }
 
   handleSearchPhraseChange(event) {
@@ -33,6 +35,16 @@ export default class Home extends React.Component {
     Router.push({
       pathname: '/search',
       query: {q: this.state.searchPhrase}
+    });
+  }
+
+  async redirectToRandomPage() {
+    const res = await fetch(`https://api.scryfall.com/cards/random`);
+    const data = await res.json();
+
+    Router.push({
+      pathname: '/card',
+      query: {id: data.id}
     });
   }
 
@@ -63,6 +75,12 @@ export default class Home extends React.Component {
               >
                 Submit
                 <Icon name="right arrow" />
+              </Button>
+              <Button icon labelPosition='left'
+                onClick={this.redirectToRandomPage}
+              >
+                Get Random
+                <Icon name="random" />
               </Button>
             </Form>
           </Container>

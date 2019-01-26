@@ -57,7 +57,7 @@ const mapStateToProps = (state) => ({
 });
 
 // HOF - connect returns function with our argument Search
-//returns component wrapped with store
+// returns component wrapped with store
 export default connect(
   mapStateToProps,
 )(Search);
