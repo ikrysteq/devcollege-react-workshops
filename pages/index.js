@@ -1,5 +1,7 @@
 import React from "react"
+import Router from "next/router"
 import Layout from "../app/Layout"
+
 import {
   Segment,
   Container,
@@ -7,17 +9,18 @@ import {
   Form,
   Button,
   Icon
-} from 'semantic-ui-react'
+} from "semantic-ui-react"
 
-export default class extends React.Component {
+export default class Home extends React.Component {
   constructor(props) {
-    super(props);
+    super(props)
 
     this.state = {
-      searchPhrase: 'test'
-    };
+      searchPhrase: "test"
+    }
 
-    this.handleSearchPhraseChange = this.handleSearchPhraseChange.bind(this);
+    this.handleSearchPhraseChange = this.handleSearchPhraseChange.bind(this)
+    this.redirectToSearchPage = this.redirectToSearchPage.bind(this)
   }
 
   handleSearchPhraseChange(event) {
@@ -26,17 +29,24 @@ export default class extends React.Component {
     })
   }
 
+  redirectToSearchPage() {
+    Router.push({
+      pathname: '/search',
+      query: {q: this.state.searchPhrase}
+    });
+  }
+
   render() {
     return (
       <Layout>
         <Segment
           textAlign="center"
-          style={{ minHeight: '100vh', paddingTop: '200px'}}
+          style={{ minHeight: "100vh", paddingTop: "200px" }}
           vertical
         >
           <Container text>
             <Header
-            content="DevCollege card search"
+              content="DevCollege card search"
             />
             <Form>
               <Form.Field>
@@ -48,7 +58,9 @@ export default class extends React.Component {
                   onChange={this.handleSearchPhraseChange}
                 />
               </Form.Field>
-              <Button>
+              <Button
+                onClick={this.redirectToSearchPage}
+              >
                 Submit
                 <Icon name="right arrow" />
               </Button>
