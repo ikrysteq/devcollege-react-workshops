@@ -1,6 +1,8 @@
 import React from "react"
 import Layout from "../app/Layout"
 import fetch from "node-fetch"
+import {connect} from "react-redux";
+import { fetchCardDetails } from "../app/actions/card";
 import {
   Card,
   Image,
@@ -8,20 +10,18 @@ import {
   Container
 } from "semantic-ui-react"
 
-export default class CardDetail extends React.Component {
-  static async getInitialProps({ query }) {
-    const cardId = query.id
-    const res = await fetch(`https://api.scryfall.com/cards/${cardId}`)
-    const statusCode = res.status
-    const card = await res.json() //parsing must be async
-    return { card, statusCode }
+class CardDetail extends React.Component {
+  static async getInitialProps({ store, query }) {
+    const cardId = query.id;
+    await store.dispatch(fetchCardDetails(cardId));
+    return {}
   }
 
   render() {
-    const { card } = this.props
+    const card  = this.props.details;
     return (
       <Layout>
-        <Card style={{ margin: "0 auto" }}>
+        <Card style={{ margin: "10vh auto 0 auto"}}>
           <Image src={card.image_uris.art_crop} />
           <Card.Content>
             <Card.Header>{card.name}</Card.Header>
@@ -41,3 +41,11 @@ export default class CardDetail extends React.Component {
     )
   }
 }
+const mapStateToProps = (state) => ({
+  details: state.card.details
+});
+
+// returns component wrapped with store
+export default connect(
+  mapStateToProps,
+)(CardDetail);

@@ -1,29 +1,25 @@
 import React from "react"
 import Link from "next/link"
 import Layout from "../app/Layout"
-import fetch from "node-fetch"
-import { Table } from "semantic-ui-react"
+import {connect} from "react-redux";
+import {fetchCards} from '../app/actions/card'
+import {
+  Table,
+} from "semantic-ui-react"
 
-export default class Search extends React.Component {
+class Search extends React.Component {
   // fires before component init:
   // query is in context
   // 'getInitialProps' code must be compatible with browser and server
-  static async getInitialProps({ query }) {
-    const searchPhrase = query.q
-    const res = await fetch(
-      `https://api.scryfall.com/cards/search?q=${searchPhrase}`
-    )
-    const statusCode = res.status
-    const { data } = await res.json() //parsing must be async
-    return { data, statusCode }
+  static async getInitialProps({ store, query }) {
+    const searchPhrase = query.q;
+    await store.dispatch(fetchCards(searchPhrase));
+    return {}
   }
 
   render() {
     // with unique keys (eg. 'card.id') react render only this one row
-    const rows =
-      this.props.statusCode === 200
-        ?
-          this.props.data.map(card => (
+    const rows = this.props.results.map(card => (
             <Table.Row key={card.id}>
               <Table.Cell>
                   <Link
@@ -36,8 +32,7 @@ export default class Search extends React.Component {
               <Table.Cell>{card.mana_cost}</Table.Cell>
               <Table.Cell>{card.eur ? `${card.eur}€` : "N/A"}</Table.Cell>
             </Table.Row>
-          ))
-        : []
+          ));
 
     return (
       <Layout>
@@ -56,3 +51,13 @@ export default class Search extends React.Component {
     )
   }
 }
+
+const mapStateToProps = (state) => ({
+  results: state.card.results
+});
+
+// HOF - connect returns function with our argument Search
+//returns component wrapped with store
+export default connect(
+  mapStateToProps,
+)(Search);
